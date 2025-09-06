@@ -22,15 +22,24 @@ const emotionalQualitiesList = [
     { id: 'compassion', name: 'Сострадание' }
 ];
 
-const QualitiesSlider = ({ qualitiesList, values, setValues, totalPointsLimit, onReset }) => {
-    // FIX: Replaced unsafe type assertion `(value as number)` with `Number(value)` for safer runtime conversion.
-    const totalPoints = Object.values(values).reduce((sum: number, value: unknown) => sum + Number(value), 0);
+// FIX: Add strong types to component props to resolve type errors in reduce calls.
+interface QualitiesSliderProps {
+    qualitiesList: { id: string, name: string }[];
+    values: { [key: string]: number };
+    setValues: (values: { [key: string]: number }) => void;
+    totalPointsLimit: number;
+    onReset: () => void;
+}
 
-    const handleChange = (id, value) => {
+const QualitiesSlider = ({ qualitiesList, values, setValues, totalPointsLimit, onReset }: QualitiesSliderProps) => {
+    // FIX: The untyped `values` prop caused an arithmetic operation error on the left-hand side.
+    // By strongly typing props, we can ensure `value` is a number and fix the reduce operation.
+    const totalPoints = Object.values(values).reduce((sum: number, value: number) => sum + value, 0);
+
+    const handleChange = (id: string, value: string) => {
         const newValue = parseInt(value, 10);
         const oldValues = { ...values };
-        // FIX: Replaced unsafe type assertion with `Number()` to prevent potential runtime errors and satisfy TypeScript.
-        const oldTotal = totalPoints - Number(oldValues[id]);
+        const oldTotal = totalPoints - (oldValues[id] || 0);
         
         let newValues = { ...oldValues, [id]: newValue };
         let newTotal = oldTotal + newValue;
@@ -48,8 +57,9 @@ const QualitiesSlider = ({ qualitiesList, values, setValues, totalPointsLimit, o
                     }
                     if (excess === 0) break;
                 }
-                // FIX: Replaced unsafe type assertion `(b as number)` with `Number(b)` for safer runtime conversion.
-                 if (Object.values(newValues).reduce((a: number, b: unknown) => a + Number(b), 0) <= totalPointsLimit) break;
+                 // FIX: The untyped values caused an arithmetic error on the right-hand side.
+                 // Typing props ensures `b` is a number and fixes the reduce operation.
+                 if (Object.values(newValues).reduce((a: number, b: number) => a + b, 0) <= totalPointsLimit) break;
             }
         }
         setValues(newValues);
@@ -59,7 +69,6 @@ const QualitiesSlider = ({ qualitiesList, values, setValues, totalPointsLimit, o
         <div className="qualities-container">
              <div className="total-points-info">
                 <p>Вы можете распределить <strong>{totalPointsLimit}</strong> баллов между качествами. Выделите главные или распределите сбалансированно.</p>
-                {/* FIX: The error on this line is a symptom of NaN propagation. The root cause is fixed in `handleChange`, and this defensive cast ensures type safety. */}
                 <span>Осталось: <strong>{totalPointsLimit - totalPoints}</strong></span>
             </div>
              <div className="qualities-header">
@@ -75,10 +84,10 @@ const QualitiesSlider = ({ qualitiesList, values, setValues, totalPointsLimit, o
                             name={id}
                             min="0"
                             max="10"
-                            value={(values[id] as number)}
+                            value={values[id]}
                             onChange={(e) => handleChange(id, e.target.value)}
                         />
-                         <span className="quality-score" style={{'--val': values[id] as number} as React.CSSProperties}>{values[id] as number}</span>
+                         <span className="quality-score" style={{'--val': values[id]} as React.CSSProperties}>{values[id]}</span>
                     </div>
                 </div>
             ))}
@@ -110,14 +119,13 @@ export const AstraNameForm = () => {
         }
     }, [step]);
     
-    // --- Validation Functions ---
     const validatePDR = (dateStr: string): string => {
         if (!/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) {
             return "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ";
         }
         const parts = dateStr.split('.');
         const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed in JS Date
+        const month = parseInt(parts[1], 10) - 1;
         const year = parseInt(parts[2], 10);
         const date = new Date(year, month, day);
         if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
@@ -133,7 +141,6 @@ export const AstraNameForm = () => {
         return "";
     };
 
-    // --- Input Handlers with Masking ---
     const handlePDRChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value.replace(/\D/g, '');
         let formatted = '';
@@ -174,8 +181,9 @@ export const AstraNameForm = () => {
         }));
     };
     
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = e.target;
+        const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
@@ -183,8 +191,8 @@ export const AstraNameForm = () => {
         if(name === 'consent') setErrors(prev => ({...prev, consent: ''}));
     };
     
-    const setIntellectualValues = (values) => setFormData(prev => ({ ...prev, intellectual: values }));
-    const setEmotionalValues = (values) => setFormData(prev => ({ ...prev, emotional: values }));
+    const setIntellectualValues = (values: { [key: string]: number }) => setFormData(prev => ({ ...prev, intellectual: values }));
+    const setEmotionalValues = (values: { [key: string]: number }) => setFormData(prev => ({ ...prev, emotional: values }));
 
     const resetQualities = (qualityType: 'intellectual' | 'emotional') => {
         const list = qualityType === 'intellectual' ? intellectualQualitiesList : emotionalQualitiesList;
@@ -209,7 +217,7 @@ export const AstraNameForm = () => {
     };
     const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
     
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const phoneError = validatePhone(formData.phone);
         if(phoneError) {
@@ -223,7 +231,7 @@ export const AstraNameForm = () => {
     const STEPS = 5;
 
     return (
-        <section ref={formRef} className="content-block form-block-container" aria-labelledby="form-title">
+        <section ref={formRef} className="form-block-container" aria-labelledby="form-title">
             <header className="form-header">
                 <h2 id="form-title" className="block-title">Заполните анкету и сразу получите 5-10 имен для ребенка</h2>
                 <p>По каждому будет рассчитан индекс гармонии по методике Astra Name</p>
@@ -288,7 +296,7 @@ export const AstraNameForm = () => {
                              <div className="form-group switch-group">
                                  <label className="field-title">В честь родственника?</label>
                                  <label className="switch">
-                                     <input type="checkbox" name="inHonor" checked={formData.inHonor === 'yes'} onChange={e => handleChange({ target: { name: 'inHonor', value: e.target.checked ? 'yes' : 'no' } })} />
+                                     <input type="checkbox" name="inHonor" checked={formData.inHonor === 'yes'} onChange={e => handleChange({ target: { name: 'inHonor', value: e.target.checked ? 'yes' : 'no' } } as any)} />
                                      <span className="slider"></span>
                                  </label>
                              </div>
@@ -296,7 +304,7 @@ export const AstraNameForm = () => {
                                 <div className="form-group switch-group">
                                     <label className="field-title">Подбирать по святцам?</label>
                                     <label className="switch">
-                                        <input type="checkbox" name="bySaints" checked={formData.bySaints === 'yes'} onChange={e => handleChange({ target: { name: 'bySaints', value: e.target.checked ? 'yes' : 'no' } })} />
+                                        <input type="checkbox" name="bySaints" checked={formData.bySaints === 'yes'} onChange={e => handleChange({ target: { name: 'bySaints', value: e.target.checked ? 'yes' : 'no' } } as any)} />
                                         <span className="slider"></span>
                                     </label>
                                 </div>

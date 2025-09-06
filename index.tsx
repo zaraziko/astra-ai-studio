@@ -13,11 +13,13 @@ const StarryCanvas = ({ id, starCount, starColor, starSize, animationDuration, r
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
     
-    window.addEventListener('resize', () => {
+    const handleResize = () => {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
         drawStars();
-    });
+    };
+    
+    window.addEventListener('resize', handleResize);
 
     const stars = Array.from({ length: starCount }, () => ({
       x: Math.random() * w,
@@ -36,6 +38,8 @@ const StarryCanvas = ({ id, starCount, starColor, starSize, animationDuration, r
     };
     
     drawStars();
+
+    return () => window.removeEventListener('resize', handleResize);
 
   }, [starCount, starColor, starSize]);
 
@@ -256,10 +260,18 @@ const ExampleBlock = () => {
         </div>
         
         <p className="block-closing-text">Вы получите не просто имя, а глубокую историю о потенциале вашего ребенка и о том, как имя поможет ему раскрыться.</p>
-        <button className="cta-button glow-button">Заполнить анкету и получить свой анализ</button>
       </section>
     );
 };
+
+const CallToActionBlock = ({ onStartForm }) => (
+    <section className="content-block call-to-action-block">
+        <button onClick={onStartForm} className="shimmering-cta-button">
+            Подобрать имя
+        </button>
+    </section>
+);
+
 
 const faqData = [
   {
@@ -333,6 +345,7 @@ const FAQBlock = () => {
 
 
 const App = () => {
+  const [isFormActive, setIsFormActive] = useState(false);
   const mousePos = useRef({x: 0, y: 0});
 
   useEffect(() => {
@@ -362,17 +375,23 @@ const App = () => {
         cancelAnimationFrame(animationFrameId);
     };
   }, []);
+  
+  const mainContentClass = isFormActive ? 'content-hidden' : 'content-visible';
+  const formClass = isFormActive ? 'form-visible' : 'form-hidden';
 
   return (
     <>
       <StarryBackground />
-      <main className="container">
-        <MethodologyBlock />
-        <PainPointsBlock />
-        <ExampleBlock />
-        <AstraNameForm />
-        <FAQBlock />
+      <main className={`container ${mainContentClass}`}>
+          <MethodologyBlock />
+          <PainPointsBlock />
+          <ExampleBlock />
+          <CallToActionBlock onStartForm={() => setIsFormActive(true)} />
+          <FAQBlock />
       </main>
+      <div className={`form-container ${formClass}`}>
+        {isFormActive && <AstraNameForm />}
+      </div>
     </>
   );
 };
