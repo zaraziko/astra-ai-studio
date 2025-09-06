@@ -1,0 +1,450 @@
+/* New Multi-Step Form Block */
+.form-block-container {
+    padding: 3rem 1.5rem;
+    background: var(--glass-bg);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.form-block-container .form-header {
+    margin-bottom: 2rem;
+}
+.form-block-container .form-header h2 {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    margin-bottom: 1rem;
+     font-weight: 300;
+    background: linear-gradient(90deg, var(--glow-gold), var(--text-primary), var(--glow-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+.form-block-container .form-header p {
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+    opacity: 0.9;
+    font-size: clamp(0.9rem, 1.5vw + 0.5rem, 1rem);
+}
+
+/* Progress Bar */
+.form-block-container .progress-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.form-block-container .progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--glass-border);
+    transform: translateY(-50%);
+    z-index: -1;
+}
+.progress-bar .progress-step {
+    width: 30px;
+    height: 30px;
+    background-color: var(--bg-color);
+    border: 2px solid var(--glass-border);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--text-secondary);
+    transition: all 0.4s ease;
+    z-index: 1; /* Ensure steps are above the line */
+}
+.progress-bar .progress-step.active {
+    border-color: var(--glow-gold);
+    color: var(--glow-gold);
+    box-shadow: 0 0 15px var(--glow-gold);
+}
+.progress-bar .progress-step span {
+    font-weight: bold;
+}
+
+/* Form Steps */
+.harmony-form {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+.harmony-form .form-step {
+    display: none;
+    animation: fade-in 0.5s ease;
+}
+.harmony-form .form-step.active {
+    display: block;
+}
+.harmony-form fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.harmony-form legend {
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    color: var(--glow-cyan);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+}
+
+.harmony-form .form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.harmony-form .form-group .field-title {
+    margin-bottom: 0.75rem;
+    opacity: 0.8;
+    padding-left: 0.2rem;
+    font-size: clamp(0.9rem, 1vw + 0.5rem, 1rem);
+}
+.harmony-form .form-group input[type="text"],
+.harmony-form .form-group input[type="tel"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 0.75rem 0.2rem;
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+    font-size: clamp(1rem, 1.5vw + 0.5rem, 1.1rem);
+}
+.harmony-form .form-group input[type="text"]::placeholder,
+.harmony-form .form-group input[type="tel"]::placeholder {
+    color: rgba(224, 229, 255, 0.4);
+}
+.harmony-form .form-group input[type="text"]:focus,
+.harmony-form .form-group input[type="tel"]:focus {
+    outline: none;
+    border-bottom-color: var(--glow-gold);
+}
+
+.harmony-form .form-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    padding-left: 0.2rem;
+}
+
+.harmony-form .error-message {
+    font-size: 0.8rem;
+    color: #ff8a80; /* A light red for dark backgrounds */
+    margin-top: 0.5rem;
+    padding-left: 0.2rem;
+}
+
+
+/* Custom Radio & Checkbox */
+.harmony-form .radio-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.harmony-form .radio-group input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+.harmony-form .radio-group label {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.harmony-form .radio-group input[type="radio"]:checked + label {
+    background-color: var(--glow-gold);
+    color: var(--bg-color);
+    border-color: var(--glow-gold);
+    font-weight: bold;
+}
+.harmony-form .radio-group input[type="radio"]:focus-visible + label {
+    outline: 2px solid var(--glow-gold);
+    outline-offset: 2px;
+}
+
+.harmony-form .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem 1rem;
+}
+
+.harmony-form .checkbox-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+}
+.harmony-form .checkbox-group.consent-group {
+    position: relative;
+    padding-bottom: 1rem; /* Space for error message */
+}
+.harmony-form .consent-group .error-message {
+    position: absolute;
+    bottom: -0.5rem;
+}
+
+.harmony-form .checkbox-group input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+.harmony-form .checkbox-group label {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+}
+.harmony-form .checkbox-group label:hover {
+    color: var(--glow-cyan);
+}
+.harmony-form .checkbox-group label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--glass-border);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.harmony-form .checkbox-group label::after {
+    content: '✔';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    font-size: 16px;
+    color: var(--glow-cyan);
+    transition: transform 0.3s ease;
+}
+.harmony-form .checkbox-group input[type="checkbox"]:checked + label::before {
+    border-color: var(--glow-cyan);
+    background-color: var(--glow-cyan);
+}
+.harmony-form .checkbox-group input[type="checkbox"]:checked + label::after {
+    transform: translateY(-50%) scale(1);
+    color: var(--bg-color);
+}
+.harmony-form .checkbox-group input[type="checkbox"]:focus-visible + label::before {
+    outline: 2px solid var(--glow-cyan);
+    outline-offset: 2px;
+}
+
+.harmony-form .switch-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+.switch-group .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+.switch-group .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.switch-group .switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 26px;
+    transition: .4s;
+}
+.switch-group .switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--text-secondary);
+    border-radius: 50%;
+    transition: .4s;
+}
+.switch-group .switch input:checked + .slider {
+    background-color: var(--glow-cyan);
+    border-color: var(--glow-cyan);
+}
+.switch-group .switch input:checked + .slider:before {
+    transform: translateX(24px);
+    background-color: var(--bg-color);
+}
+.switch-group .switch input:focus-visible + .slider {
+    outline: 2px solid var(--glow-cyan);
+    outline-offset: 2px;
+}
+
+
+/* Qualities Sliders */
+.harmony-form .qualities-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.qualities-container .qualities-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes shimmer {
+    to { background-position: 200% center; }
+}
+
+.qualities-header .reset-button {
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    background: linear-gradient(90deg, var(--glow-cyan), var(--glow-gold), var(--glow-cyan));
+    background-size: 200% auto;
+    color: var(--bg-color);
+    font-weight: bold;
+    border: none;
+    animation: shimmer 4s linear infinite;
+}
+.qualities-header .reset-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+.qualities-container .total-points-info {
+    text-align: center;
+    padding: 1rem;
+    background: var(--glass-bg);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+.qualities-container .total-points-info p {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.qualities-container .total-points-info span {
+    color: var(--text-primary);
+    font-weight: bold;
+}
+.qualities-container .total-points-info strong {
+    color: var(--glow-gold);
+}
+.qualities-container .quality-slider label {
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--text-primary);
+}
+.qualities-container .slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.qualities-container input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 5px;
+    outline: none;
+}
+.qualities-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--glow-cyan);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid var(--bg-color);
+    box-shadow: 0 0 10px var(--glow-cyan);
+}
+.qualities-container input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--glow-cyan);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid var(--bg-color);
+    box-shadow: 0 0 10px var(--glow-cyan);
+}
+.qualities-container .quality-score {
+    font-weight: bold;
+    color: var(--glow-gold);
+    font-size: 1.2rem;
+    min-width: 2ch;
+    text-align: right;
+    text-shadow: 0 0 8px var(--glow-gold);
+}
+
+
+/* Form Navigation */
+.harmony-form .form-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+.form-navigation .nav-button,
+.form-navigation .cta-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    font-size: clamp(0.9rem, 1.5vw + 0.5rem, 1rem);
+}
+.form-navigation .nav-button:hover {
+    border-color: var(--glow-gold);
+    color: var(--glow-gold);
+}
+.form-navigation .nav-button.next {
+    margin-left: auto;
+}
+.form-navigation .cta-button {
+    color: var(--glow-gold);
+    border-color: var(--glow-gold);
+}
+.form-navigation .cta-button:hover {
+    background: var(--glow-gold);
+    color: var(--bg-color);
+    box-shadow: 0 0 25px var(--glow-gold);
+}
